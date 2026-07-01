@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                               String    @id @default(uuid())
+  email                            String    @unique
+  name                             String
+  role                             String    @default("Checker")
+  status                           String    @default("Active")
+  createdAt                        DateTime  @default(now())
+  updatedAt                        DateTime  @updatedAt
+  password                         String?
+  facebook                         String?
+  phone                            String?
+  refererEmail                     String?
+  linkedRecruiterEmail             String?
+  hasCompletedPreCourse            Boolean   @default(false)
+  isRegistered                     Boolean   @default(false)
+  isDashboardCompleted             Boolean   @default(false)
+  gingerPassword                   String?
+  gingerEmail                      String?   @unique
+  gingerUsername                   String?   @unique
+  onboardingProgress               Json?
+  firstName                        String?
+  lastName                         String?
+  isRulesAndGuidelinesCompleted    Boolean   @default(false)
+  onRulesAndGuidelinesProgress     Json?
+  lastLogin                        DateTime?
+  hasClickedLandCoverTraining      Boolean   @default(false)
+  hasClickedTransportationTraining Boolean   @default(false)
+  landCoverProgress                Json?
+  transportationProgress           Json?
+  activeProjectsTutorialProgress   Json?
+  projects                         Project[]
+  trainings                        Training?
+  referer                          Referal?  @relation(fields: [refererEmail], references: [email])
+
+  @@index([refererEmail])
+  @@index([createdAt(sort: Desc)])
+}
+
+model Project {
+  id              String   @id @default(uuid())
+  projectId       String   @unique
+  nameDesignation String
+  status          String
+  endDate         DateTime
+  taskNum         Int
+  registeredHours Float
+  userId          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  user            User     @relation(fields: [userId], references: [id])
+}
+
+model SoftwareCredential {
+  id          String   @id @default(uuid())
+  role        String
+  softwareUid String   @unique
+  password    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PaymentDetails {
+  id            String                 @id @default(uuid())
+  email         String                 @unique
+  payeeName     String?
+  payeeUid      String?
+  paymentMethod String?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  history       PaymentMethodHistory[]
+}
+
+model PaymentMethodHistory {
+  id               String         @id @default(uuid())
+  email            String
+  oldPayeeName     String?
+  oldPayeeUid      String?
+  oldPaymentMethod String?
+  newPayeeName     String?
+  newPayeeUid      String?
+  newPaymentMethod String?
+  changedAt        DateTime       @default(now())
+  paymentDetails   PaymentDetails @relation(fields: [email], references: [email], onDelete: Cascade)
+}
+
+model CurrentIncome {
+  id                 String    @id @default(uuid())
+  email              String    @unique
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  estimatedAmount    Float     @default(0)
+  status             String    @default("Accumulating")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model IncomeHistory {
+  id            String    @id @default(uuid())
+  email         String
+  amountPaid    Float
+  periodStart   DateTime?
+  periodEnd     DateTime?
+  payoutDate    DateTime?
+  status        String    @default("Paid")
+  transactionId String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Referal {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  code          String
+  status        String   @default("Active")
+  howManyUse    Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now()) @updatedAt
+  name          String?
+  username      String?
+  sitename      String   @default("XFd_")
+  referredUsers User[]
+}
+
+model Ranking {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String
+  balance   Float
+  rank      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CheckerRanking {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String
+  balance   Float
+  rank      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Training {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  trainings Json[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  chatType   String
+  sender     String
+  senderRole String?
+  text       String
+  imageUrl   String?
+  createdAt  DateTime @default(now())
+  isEdited   Boolean  @default(false)
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@index([chatType, createdAt])
+}
+
+model SystemSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+}
