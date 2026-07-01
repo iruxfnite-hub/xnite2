@@ -14,6 +14,14 @@ export default function CompleteProfilePage() {
   const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const EyeIcon = ({ show }: { show: boolean }) => (
+    show ? (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>
+    ) : (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+    )
+  );
   const [showGingerPassword, setShowGingerPassword] = useState(false);
 
   const [initialFirstName, setInitialFirstName] = useState("");
@@ -155,13 +163,13 @@ export default function CompleteProfilePage() {
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-[#0D1B2A] dark:text-white">Account Linked!</h2>
           <p className="text-sm text-[#2F3E46] dark:text-white/70 mt-3 mb-6">
-            Your Google account has been successfully linked with your Ginger credentials.
+            Your Google account has been successfully linked with your Ginger credentials. Please log in to the Xfinite website to continue.
           </p>
           <button
-            onClick={() => window.location.href = '/'}
+            onClick={() => window.location.href = 'https://app.xfnite.cloud/'}
             className="w-full bg-[#1F7A1F] hover:bg-[#145214] text-white dark:bg-[#55f761] dark:hover:bg-[#3de34a] dark:text-[#060D14] font-semibold rounded-xl py-3.5 text-sm transition-all"
           >
-            Go to Home
+            Go to Xfinite
           </button>
         </div>
       </div>
@@ -240,8 +248,8 @@ export default function CompleteProfilePage() {
                   className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                   type={showPassword ? "text" : "password"} id="password" name="password" placeholder="••••••••" required disabled={isLoading}
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60">
-                  {showPassword ? "Hide" : "Show"}
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60 hover:text-black dark:hover:text-white transition-colors" aria-label={showPassword ? "Hide password" : "Show password"}>
+                  <EyeIcon show={showPassword} />
                 </button>
               </div>
             </div>
@@ -252,8 +260,8 @@ export default function CompleteProfilePage() {
                   className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                   type={showConfirmPassword ? "text" : "password"} id="password_conf" name="password_conf" placeholder="••••••••" required disabled={isLoading}
                 />
-                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60">
-                  {showConfirmPassword ? "Hide" : "Show"}
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60 hover:text-black dark:hover:text-white transition-colors" aria-label={showConfirmPassword ? "Hide password" : "Show password"}>
+                  <EyeIcon show={showConfirmPassword} />
                 </button>
               </div>
             </div>
@@ -286,8 +294,8 @@ export default function CompleteProfilePage() {
                       className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                       type={showGingerPassword ? "text" : "password"} id="gingerPassword" name="gingerPassword" required disabled={isLoading} placeholder="••••••••"
                     />
-                    <button type="button" onClick={() => setShowGingerPassword(!showGingerPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60">
-                      {showGingerPassword ? "Hide" : "Show"}
+                    <button type="button" onClick={() => setShowGingerPassword(!showGingerPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60 hover:text-black dark:hover:text-white transition-colors" aria-label={showGingerPassword ? "Hide password" : "Show password"}>
+                      <EyeIcon show={showGingerPassword} />
                     </button>
                   </div>
                 </div>
