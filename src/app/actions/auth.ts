@@ -59,8 +59,9 @@ export async function completeProfileAction(data: any) {
         gingerUsername,
         gingerPassword,
         isRegistered: true,
-        hasCompletedPreCourse: false,
+        hasCompletedPreCourse: true,
         isDashboardCompleted: true,
+        isRulesAndGuidelinesCompleted: true,
         role: "Checker",
         status: "Active"
       }
