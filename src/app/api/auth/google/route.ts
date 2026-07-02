@@ -50,7 +50,16 @@ export async function GET(request: Request) {
       const name = userData.name || userData.email?.split('@')[0] || "Unknown";
       const email = userData.email || "Unknown";
 
-      // Always redirect to complete profile
+      // Check if user already exists
+      const existingUser = await prisma.user.findUnique({
+        where: { email }
+      });
+
+      if (existingUser) {
+        return NextResponse.redirect(`${origin}/register?error=EmailAlreadyExists`);
+      }
+
+      // Proceed to complete profile
       const response = NextResponse.redirect(`${origin}/complete-profile`);
       response.cookies.set("signup_name", name, { path: "/", maxAge: 3600 });
       response.cookies.set("signup_email", email, { path: "/", maxAge: 3600 });

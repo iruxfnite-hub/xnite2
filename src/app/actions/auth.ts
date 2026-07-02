@@ -62,7 +62,9 @@ export async function completeProfileAction(data: any) {
         hasCompletedPreCourse: true,
         isDashboardCompleted: true,
         isRulesAndGuidelinesCompleted: true,
-        role: "Checker",
+        hasClickedLandCoverTraining: true,
+        hasClickedTransportationTraining: true,
+        role: "Old Labeler",
         status: "Active"
       }
     });

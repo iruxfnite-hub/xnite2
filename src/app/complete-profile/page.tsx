@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { completeProfileAction } from "@/app/actions/auth";
-
 export default function CompleteProfilePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -13,6 +12,7 @@ export default function CompleteProfilePage() {
   const [phoneError, setPhoneError] = useState("");
   const [phone, setPhone] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const EyeIcon = ({ show }: { show: boolean }) => (
@@ -28,6 +28,15 @@ export default function CompleteProfilePage() {
   const [initialLastName, setInitialLastName] = useState("");
 
   useEffect(() => {
+    const isDarkMode = localStorage.theme === 'dark' || 
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    setIsDark(isDarkMode);
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    
     // Read names from cookies if they exist
     const cookies = document.cookie.split(';');
     const getCookie = (name: string) => {
@@ -42,6 +51,17 @@ export default function CompleteProfilePage() {
       setInitialLastName(parts.length > 1 ? parts.slice(1).join(" ") : "");
     }
   }, []);
+
+  const toggleTheme = () => {
+    setIsDark(!isDark);
+    if (isDark) {
+      document.documentElement.classList.remove('dark');
+      localStorage.theme = 'light';
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+    }
+  };
 
   const FACEBOOK_REGEX = /^(https?:\/\/)?(www\.|m\.)?(facebook\.com|fb\.com|m\.me|messenger\.com(\/t)?)\/.{3,}$/i;
 
@@ -156,7 +176,18 @@ export default function CompleteProfilePage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#E0E1DD] dark:bg-[#060D14] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#E0E1DD] dark:bg-[#060D14] flex items-center justify-center p-4 transition-colors duration-200 relative">
+        <button 
+          onClick={toggleTheme}
+          className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-white/30 dark:bg-black/30 backdrop-blur-md border border-white/50 dark:border-white/10 text-[#0D1B2A] dark:text-gray-200 hover:bg-white/50 dark:hover:bg-black/50 transition-all cursor-pointer shadow-sm"
+          aria-label="Toggle theme"
+        >
+          {isDark ? (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+          )}
+        </button>
         <div className="w-full max-w-md bg-white dark:bg-black/60 border border-black/10 dark:border-white/10 rounded-2xl shadow-2xl p-8 text-center animate-scale-in">
           <div className="w-16 h-16 mx-auto bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-[#55f761] rounded-full flex items-center justify-center mb-6">
             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" /></svg>
@@ -177,10 +208,22 @@ export default function CompleteProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#E0E1DD] dark:bg-[#060D14] flex flex-col items-center justify-center p-4 py-12 relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#E0E1DD] dark:bg-[#060D14] flex flex-col items-center justify-center p-4 py-12 relative overflow-x-hidden transition-colors duration-200">
+      <button 
+        onClick={toggleTheme}
+        className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-white/30 dark:bg-black/30 backdrop-blur-md border border-white/50 dark:border-white/10 text-[#0D1B2A] dark:text-gray-200 hover:bg-white/50 dark:hover:bg-black/50 transition-all cursor-pointer shadow-sm"
+        aria-label="Toggle theme"
+      >
+        {isDark ? (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+        ) : (
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+        )}
+      </button>
+
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none fixed">
-        <div className="absolute rounded-full blur-[80px] opacity-40 dark:opacity-15 bg-[#55f761] w-[40vw] h-[40vw] -top-[10%] -left-[10%] animate-pulse"></div>
-        <div className="absolute rounded-full blur-[80px] opacity-40 dark:opacity-15 bg-[#1F7A1F] w-[50vw] h-[50vw] top-[40%] -right-[20%] animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute rounded-full blur-[80px] opacity-40 dark:opacity-15 bg-[#55f761] w-[40vw] h-[40vw] -top-[10%] -left-[10%] animate-pulse-subtle"></div>
+        <div className="absolute rounded-full blur-[80px] opacity-40 dark:opacity-15 bg-[#1F7A1F] w-[50vw] h-[50vw] top-[40%] -right-[20%] animate-pulse-subtle" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 w-full flex flex-col justify-center max-w-xl bg-white/60 dark:bg-black/60 backdrop-blur-xl border border-white/40 dark:border-white/15 rounded-tr-2xl rounded-bl-2xl shadow-2xl p-6 sm:p-8 animate-scale-in">
@@ -204,14 +247,14 @@ export default function CompleteProfilePage() {
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="firstName">First Name <span className="text-red-500">*</span></label>
               <input
-                className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
+                className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                 type="text" id="firstName" name="firstName" required defaultValue={initialFirstName} disabled={isLoading}
               />
             </div>
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="lastName">Last Name <span className="text-red-500">*</span></label>
               <input
-                className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
+                className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                 type="text" id="lastName" name="lastName" required defaultValue={initialLastName} disabled={isLoading}
               />
             </div>
@@ -220,7 +263,7 @@ export default function CompleteProfilePage() {
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="facebook">Facebook Profile Link <span className="text-red-500">*</span></label>
             <input
-              className={`w-full px-3 py-2.5 bg-white dark:bg-white/10 border rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 ${facebookError ? "border-red-400 focus:ring-red-300" : "border-black/15 dark:border-white/15 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"}`}
+              className={`w-full px-3 py-2.5 bg-white dark:bg-white/10 border rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 ${facebookError ? "border-red-400 focus:ring-red-300" : "border-black/15 dark:border-white/15 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"}`}
               type="text" id="facebook" name="facebook" placeholder="https://facebook.com/yourprofile" required disabled={isLoading} onChange={handleFacebookChange}
             />
             {facebookError && <p className="text-xs text-red-500 mt-1">{facebookError}</p>}
@@ -233,7 +276,7 @@ export default function CompleteProfilePage() {
                 <span className="text-lg">🇵🇭</span><span>+63</span>
               </div>
               <input
-                className={`flex-1 w-full px-3 py-2.5 bg-white dark:bg-white/10 border rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 ${phoneError ? "border-red-400 focus:ring-red-300" : "border-black/15 dark:border-white/15 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"}`}
+                className={`flex-1 w-full px-3 py-2.5 bg-white dark:bg-white/10 border rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 ${phoneError ? "border-red-400 focus:ring-red-300" : "border-black/15 dark:border-white/15 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"}`}
                 type="tel" id="phone" name="phone" value={phone} placeholder="9123456789" maxLength={10} required disabled={isLoading} onChange={handlePhoneChange}
               />
             </div>
@@ -245,7 +288,7 @@ export default function CompleteProfilePage() {
               <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="password">Password <span className="text-red-500">*</span></label>
               <div className="relative">
                 <input
-                  className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
+                  className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                   type={showPassword ? "text" : "password"} id="password" name="password" placeholder="••••••••" required disabled={isLoading}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60 hover:text-black dark:hover:text-white transition-colors" aria-label={showPassword ? "Hide password" : "Show password"}>
@@ -257,7 +300,7 @@ export default function CompleteProfilePage() {
               <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="password_conf">Confirm Password <span className="text-red-500">*</span></label>
               <div className="relative">
                 <input
-                  className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
+                  className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                   type={showConfirmPassword ? "text" : "password"} id="password_conf" name="password_conf" placeholder="••••••••" required disabled={isLoading}
                 />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60 hover:text-black dark:hover:text-white transition-colors" aria-label={showConfirmPassword ? "Hide password" : "Show password"}>
@@ -274,7 +317,7 @@ export default function CompleteProfilePage() {
               <div className="space-y-1.5">
                 <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerEmail">Ginger Email <span className="text-red-500">*</span></label>
                 <input
-                  className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
+                  className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                   type="email" id="gingerEmail" name="gingerEmail" required disabled={isLoading} placeholder="example@ginger.com"
                 />
               </div>
@@ -283,7 +326,7 @@ export default function CompleteProfilePage() {
                 <div className="space-y-1.5">
                   <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerUsername">Ginger Username <span className="text-red-500">*</span></label>
                   <input
-                    className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
+                    className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                     type="text" id="gingerUsername" name="gingerUsername" required disabled={isLoading} placeholder="Username"
                   />
                 </div>
@@ -291,7 +334,7 @@ export default function CompleteProfilePage() {
                   <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerPassword">Ginger Password <span className="text-red-500">*</span></label>
                   <div className="relative">
                     <input
-                      className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
+                      className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                       type={showGingerPassword ? "text" : "password"} id="gingerPassword" name="gingerPassword" required disabled={isLoading} placeholder="••••••••"
                     />
                     <button type="button" onClick={() => setShowGingerPassword(!showGingerPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60 hover:text-black dark:hover:text-white transition-colors" aria-label={showGingerPassword ? "Hide password" : "Show password"}>
@@ -319,6 +362,12 @@ export default function CompleteProfilePage() {
           to { opacity: 1; transform: scale(1); }
         }
         .animate-scale-in { animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        @keyframes pulseSubtle {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+        }
+        .animate-pulse-subtle { animation: pulseSubtle 4s ease-in-out infinite; }
       `}</style>
     </div>
   );

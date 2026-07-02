@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isDark, setIsDark] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     // Check initial state
@@ -14,6 +15,15 @@ export default function RegisterPage() {
     setIsDark(isDarkMode);
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+    }
+
+    // Check for error in URL
+    const searchParams = new URLSearchParams(window.location.search);
+    const error = searchParams.get('error');
+    if (error === 'EmailAlreadyExists') {
+      setErrorMsg("This Google account is already registered. Please login instead.");
+    } else if (error) {
+      setErrorMsg("An error occurred during authentication. Please try again.");
     }
   }, []);
 
@@ -63,6 +73,12 @@ export default function RegisterPage() {
             Sign in with Google to start connecting your existing GingerBitMaPro account.
           </p>
         </div>
+
+        {errorMsg && (
+          <div className="mb-6 p-3 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-600 dark:text-red-400 text-center font-medium">
+            {errorMsg}
+          </div>
+        )}
 
         <div className="flex flex-col gap-4">
           <button
