@@ -10,7 +10,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     // Check initial state
-    const isDarkMode = document.documentElement.classList.contains('dark') || 
+    const isDarkMode = document.documentElement.classList.contains('dark') ||
       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
     setIsDark(isDarkMode);
     if (isDarkMode) {
@@ -41,7 +41,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-[#E0E1DD] dark:bg-[#060D14] flex items-center justify-center p-4 relative overflow-hidden transition-colors duration-200">
       {/* Theme Toggle Button */}
-      <button 
+      <button
         onClick={toggleTheme}
         className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-white/30 dark:bg-black/30 backdrop-blur-md border border-white/50 dark:border-white/10 text-[#0D1B2A] dark:text-gray-200 hover:bg-white/50 dark:hover:bg-black/50 transition-all cursor-pointer shadow-sm"
         aria-label="Toggle theme"
@@ -67,10 +67,10 @@ export default function RegisterPage() {
       <div className="relative z-10 w-full flex flex-col justify-center max-w-md bg-white/60 dark:bg-black/60 backdrop-blur-xl border border-white/40 dark:border-white/15 rounded-2xl shadow-2xl p-6 sm:p-8 animate-scale-in">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-[#0D1B2A] dark:text-white">
-            Link Ginger Account
+            Link Bitmappro Account
           </h1>
           <p className="text-sm text-[#2F3E46] dark:text-white/60 mt-2">
-            Sign in with Google to start connecting your existing GingerBitMaPro account.
+            Sign in with Google to start connecting your existing Bitmappro account.
           </p>
         </div>
 
@@ -83,9 +83,9 @@ export default function RegisterPage() {
         <div className="flex flex-col gap-4">
           <button
             type="button"
-            onClick={() => { 
+            onClick={() => {
               setIsLoading(true);
-              window.location.href = '/api/auth/google'; 
+              window.location.href = '/api/auth/google';
             }}
             disabled={isLoading}
             className="w-full bg-white dark:bg-[#0D1B2A] hover:bg-gray-50 dark:hover:bg-[#1B263B] text-[#0D1B2A] dark:text-white border border-black/15 dark:border-white/15 font-semibold rounded-xl py-3.5 text-sm transition-colors shadow-sm disabled:opacity-70 flex justify-center items-center gap-3 cursor-pointer"

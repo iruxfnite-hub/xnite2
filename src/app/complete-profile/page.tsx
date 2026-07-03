@@ -28,7 +28,7 @@ export default function CompleteProfilePage() {
   const [initialLastName, setInitialLastName] = useState("");
 
   useEffect(() => {
-    const isDarkMode = localStorage.theme === 'dark' || 
+    const isDarkMode = localStorage.theme === 'dark' ||
       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
     setIsDark(isDarkMode);
     if (isDarkMode) {
@@ -36,7 +36,7 @@ export default function CompleteProfilePage() {
     } else {
       document.documentElement.classList.remove('dark');
     }
-    
+
     // Read names from cookies if they exist
     const cookies = document.cookie.split(';');
     const getCookie = (name: string) => {
@@ -76,10 +76,10 @@ export default function CompleteProfilePage() {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/[^0-9]/g, '');
-    
+
     if (val.startsWith('63')) val = val.substring(2);
     if (val.startsWith('0')) val = val.substring(1);
-    
+
     if (val.length > 0 && val[0] !== '9') {
       val = '';
     }
@@ -87,9 +87,9 @@ export default function CompleteProfilePage() {
     if (val.length > 10) {
       val = val.substring(0, 10);
     }
-    
+
     setPhone(val);
-    
+
     if (val && val.length < 10) {
       setPhoneError("Phone number must be exactly 10 digits starting with 9.");
     } else {
@@ -105,7 +105,7 @@ export default function CompleteProfilePage() {
     const formDataObj = new FormData(e.currentTarget);
     const firstName = formDataObj.get("firstName") as string;
     const lastName = formDataObj.get("lastName") as string;
-    
+
     const rawPhone = formDataObj.get("phone") as string;
     const phoneNum = rawPhone.startsWith("+63") ? rawPhone : `+63${rawPhone.replace(/^0/, '')}`;
     const PHONE_REGEX = /^\+639\d{9}$/;
@@ -115,11 +115,11 @@ export default function CompleteProfilePage() {
       return;
     }
     const finalPhone = phoneNum;
-    
+
     const facebook = formDataObj.get("facebook") as string;
     const password = formDataObj.get("password") as string;
     const password_conf = formDataObj.get("password_conf") as string;
-    
+
     const gingerEmail = formDataObj.get("gingerEmail") as string;
     const gingerUsername = formDataObj.get("gingerUsername") as string;
     const gingerPassword = formDataObj.get("gingerPassword") as string;
@@ -130,7 +130,7 @@ export default function CompleteProfilePage() {
     }
 
     if (password.length < 5) {
-      setError("Password must be at least 5 characters long." );
+      setError("Password must be at least 5 characters long.");
       setIsLoading(false); return;
     }
 
@@ -150,11 +150,11 @@ export default function CompleteProfilePage() {
     }
 
     try {
-      const res = await completeProfileAction({ 
-        firstName, 
-        lastName, 
-        phone: finalPhone, 
-        facebook, 
+      const res = await completeProfileAction({
+        firstName,
+        lastName,
+        phone: finalPhone,
+        facebook,
         password,
         gingerEmail,
         gingerUsername,
@@ -177,7 +177,7 @@ export default function CompleteProfilePage() {
   if (success) {
     return (
       <div className="min-h-screen bg-[#E0E1DD] dark:bg-[#060D14] flex items-center justify-center p-4 transition-colors duration-200 relative">
-        <button 
+        <button
           onClick={toggleTheme}
           className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-white/30 dark:bg-black/30 backdrop-blur-md border border-white/50 dark:border-white/10 text-[#0D1B2A] dark:text-gray-200 hover:bg-white/50 dark:hover:bg-black/50 transition-all cursor-pointer shadow-sm"
           aria-label="Toggle theme"
@@ -194,13 +194,13 @@ export default function CompleteProfilePage() {
           </div>
           <h2 className="text-2xl font-bold tracking-tight text-[#0D1B2A] dark:text-white">Account Linked!</h2>
           <p className="text-sm text-[#2F3E46] dark:text-white/70 mt-3 mb-6">
-            Your Google account has been successfully linked with your Ginger credentials. Please log in to the Xfinite website to continue.
+            Your Google account has been successfully linked with your Bitmappro credentials. Please log in to the Xfinite website to continue.
           </p>
           <button
             onClick={() => window.location.href = 'https://app.xfnite.cloud/'}
             className="w-full bg-[#1F7A1F] hover:bg-[#145214] text-white dark:bg-[#55f761] dark:hover:bg-[#3de34a] dark:text-[#060D14] font-semibold rounded-xl py-3.5 text-sm transition-all"
           >
-            Go to Xfinite
+            Go to XFnite
           </button>
         </div>
       </div>
@@ -209,7 +209,7 @@ export default function CompleteProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#E0E1DD] dark:bg-[#060D14] flex flex-col items-center justify-center p-4 py-12 relative overflow-x-hidden transition-colors duration-200">
-      <button 
+      <button
         onClick={toggleTheme}
         className="absolute top-4 right-4 z-50 p-2.5 rounded-full bg-white/30 dark:bg-black/30 backdrop-blur-md border border-white/50 dark:border-white/10 text-[#0D1B2A] dark:text-gray-200 hover:bg-white/50 dark:hover:bg-black/50 transition-all cursor-pointer shadow-sm"
         aria-label="Toggle theme"
@@ -232,7 +232,7 @@ export default function CompleteProfilePage() {
             Link Your Account
           </h1>
           <p className="text-sm text-[#2F3E46] dark:text-white/60 mt-1.5">
-            Complete your profile and link your existing Ginger credentials.
+            Complete your profile and link your existing bitmappro credentials.
           </p>
         </div>
 
@@ -285,7 +285,7 @@ export default function CompleteProfilePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="password">Password <span className="text-red-500">*</span></label>
+              <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="password">XFnite.cloud desired password <span className="text-red-500">*</span></label>
               <div className="relative">
                 <input
                   className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
@@ -311,11 +311,11 @@ export default function CompleteProfilePage() {
           </div>
 
           <div className="border-t border-black/10 dark:border-white/10 pt-5 mt-2">
-            <h3 className="text-md font-semibold text-[#0D1B2A] dark:text-white mb-4">Link Existing Ginger Account</h3>
-            
+            <h3 className="text-md font-semibold text-[#0D1B2A] dark:text-white mb-4">Link Existing Bitmappro Account</h3>
+
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerEmail">Ginger Email <span className="text-red-500">*</span></label>
+                <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerEmail">Bitmappro Email <span className="text-red-500">*</span></label>
                 <input
                   className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                   type="email" id="gingerEmail" name="gingerEmail" required disabled={isLoading} placeholder="example@ginger.com"
@@ -324,14 +324,14 @@ export default function CompleteProfilePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerUsername">Ginger Username <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerUsername">Bitmappro Sitename <span className="text-red-500">*</span></label>
                   <input
                     className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
                     type="text" id="gingerUsername" name="gingerUsername" required disabled={isLoading} placeholder="Username"
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerPassword">Ginger Password <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerPassword">Bitmappro Password <span className="text-red-500">*</span></label>
                   <div className="relative">
                     <input
                       className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
@@ -351,7 +351,7 @@ export default function CompleteProfilePage() {
             disabled={isLoading}
             className="w-full bg-[#1F7A1F] hover:bg-[#145214] text-white dark:bg-[#55f761] dark:hover:bg-[#3de34a] dark:text-[#060D14] font-semibold rounded-tr-xl rounded-bl-xl py-3 text-sm transition-colors shadow-lg shadow-black/10 dark:shadow-[#55f761]/20 disabled:opacity-70 flex justify-center items-center mt-2 cursor-pointer"
           >
-            {isLoading ? "Submitting..." : "Complete Registration"}
+            {isLoading ? "Submitting..." : "Link Bitmappro Account"}
           </button>
         </form>
       </div>
