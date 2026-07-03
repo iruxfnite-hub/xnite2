@@ -64,7 +64,7 @@ export async function completeProfileAction(data: any) {
         isRulesAndGuidelinesCompleted: true,
         hasClickedLandCoverTraining: true,
         hasClickedTransportationTraining: true,
-        role: "Old Labeler",
+        role: "old-labeler",
         status: "Active"
       }
     });
