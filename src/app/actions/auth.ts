@@ -89,6 +89,7 @@ export async function completeProfileAction(data: any) {
         gingerEmail,
         gingerUsername,
         gingerPassword,
+        linkedRecruiterEmail: gingerEmail,
         isRegistered: true,
         hasCompletedPreCourse: true,
         isDashboardCompleted: true,
