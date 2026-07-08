@@ -1,7 +1,7 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");

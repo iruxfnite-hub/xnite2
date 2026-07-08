@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -19,7 +18,6 @@ model User {
   facebook                         String?
   phone                            String?
   refererEmail                     String?
-  linkedRecruiterEmail             String?
   hasCompletedPreCourse            Boolean   @default(false)
   isRegistered                     Boolean   @default(false)
   isDashboardCompleted             Boolean   @default(false)
@@ -37,6 +35,8 @@ model User {
   landCoverProgress                Json?
   transportationProgress           Json?
   activeProjectsTutorialProgress   Json?
+  linkedRecruiterEmail             String?
+  group_id                         Int?
   projects                         Project[]
   trainings                        Training?
   referer                          Referal?  @relation(fields: [refererEmail], references: [email])
@@ -165,16 +165,67 @@ model ChatMessage {
   sender     String
   senderRole String?
   text       String
-  imageUrl   String?
   createdAt  DateTime @default(now())
   isEdited   Boolean  @default(false)
   updatedAt  DateTime @default(now()) @updatedAt
+  imageUrl   String?
 
   @@index([chatType, createdAt])
 }
 
 model SystemSetting {
-  id        String   @id @default(uuid())
-  key       String   @unique
-  value     String
+  id    String @id @default(uuid())
+  key   String @unique
+  value String
+}
+
+model Attendance {
+  id                String              @id
+  createdAt         DateTime            @default(now())
+  createdBy         String?
+  date              DateTime            @default(now())
+  password          String
+  title             String
+  createdByEmail    String?
+  slug              String              @unique @default(dbgenerated("gen_random_uuid()"))
+  AttendanceSession AttendanceSession[]
+}
+
+model AttendanceSession {
+  id             String     @id
+  meetingId      String
+  userEmail      String
+  userName       String
+  attendedAt     DateTime   @default(now())
+  facebook       String?
+  gingerUsername String?
+  Attendance     Attendance @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, userEmail])
+}
+
+model Group {
+  id           String   @id
+  groupName    String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  groupId      Int      @unique
+  groupType    String   @default("group")
+  managerEmail String?
+  ownerEmail   String?
+  checkerLink  String?
+  judgerLink   String?
+}
+
+model work_logs {
+  id         Int      @default(autoincrement())
+  owner_name String
+  project_id Int
+  role       String
+  worktime   Float
+  task_num   Int
+  features   Int
+  uuid       String   @id @default(dbgenerated("gen_random_uuid()"))
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
 }
