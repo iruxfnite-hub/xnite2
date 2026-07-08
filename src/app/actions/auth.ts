@@ -45,6 +45,37 @@ export async function completeProfileAction(data: any) {
       }
     }
 
+    // Verify Ginger credentials before creating the user
+    try {
+      const GINGER_BASE = process.env.NEXT_PUBLIC_GINGER_API_URL || "https://ginger.bitmappro.com";
+      
+      // Verify Email + Password
+      const gingerResEmail = await fetch(`${GINGER_BASE}/bac/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: gingerEmail, password: gingerPassword }),
+      });
+      const gingerDataEmail = await gingerResEmail.json().catch(() => ({}));
+
+      if (!gingerResEmail.ok || !gingerDataEmail?.credential?.access_token) {
+        return { success: false, error: "Invalid Bitmappro Email or Password. Please check your credentials." };
+      }
+
+      // Check if the provided username exists somewhere in the response data.
+      // Since we know the Ginger API returns the user details in the login response,
+      // we strictly enforce that the sitename must be present in the payload.
+      const stringifiedData = JSON.stringify(gingerDataEmail).toLowerCase();
+      
+      // We look for the sitename in the raw JSON response
+      if (!stringifiedData.includes(gingerUsername.toLowerCase())) {
+        return { success: false, error: "Invalid Bitmappro Sitename. The provided sitename does not match the account." };
+      }
+
+    } catch (err) {
+      console.error("Ginger verification failed:", err);
+      return { success: false, error: "Failed to verify Bitmappro credentials with the server. Please try again later." };
+    }
+
     // Create the user
     const newUser = await prisma.user.create({
       data: {

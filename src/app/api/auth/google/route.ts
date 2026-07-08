@@ -56,7 +56,8 @@ export async function GET(request: Request) {
       });
 
       if (existingUser) {
-        return NextResponse.redirect(`${origin}/register?error=EmailAlreadyExists`);
+        // Redirect directly to the main app's Google login
+        return NextResponse.redirect(`https://app.xfnite.cloud/api/auth/google`);
       }
 
       // Proceed to complete profile
