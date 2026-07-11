@@ -12,13 +12,13 @@ export async function completeProfileAction(data: any) {
       facebook,
       phone,
       password,
-      gingerEmail,
       gingerUsername,
       gingerPassword
     } = data;
+    const gingerEmail = data.gingerEmail?.toLowerCase();
 
     const cookieStore = await cookies();
-    const email = cookieStore.get("signup_email")?.value;
+    const email = cookieStore.get("signup_email")?.value?.toLowerCase();
 
     if (!email) {
       return { success: false, error: "Session expired. Please sign in with Google again." };

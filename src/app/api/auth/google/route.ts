@@ -48,7 +48,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       const userData = await userRes.json();
 
       const name = userData.name || userData.email?.split('@')[0] || "Unknown";
-      const email = userData.email || "Unknown";
+      const email = (userData.email || "Unknown").toLowerCase();
 
       // Check if user already exists
       const existingUser = await prisma.user.findUnique({
