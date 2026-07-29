@@ -22,7 +22,7 @@ export default function CompleteProfilePage() {
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
     )
   );
-  const [showGingerPassword, setShowGingerPassword] = useState(false);
+  const [showSoftwarePassword, setShowSoftwarePassword] = useState(false);
 
   const [initialFirstName, setInitialFirstName] = useState("");
   const [initialLastName, setInitialLastName] = useState("");
@@ -122,7 +122,7 @@ export default function CompleteProfilePage() {
 
     const gingerEmail = formDataObj.get("gingerEmail") as string;
     const gingerUsername = formDataObj.get("gingerUsername") as string;
-    const gingerPassword = formDataObj.get("gingerPassword") as string;
+    const softwarePassword = formDataObj.get("softwarePassword") as string;
 
     if (!password) {
       setError("Password is required.");
@@ -144,8 +144,8 @@ export default function CompleteProfilePage() {
       setIsLoading(false); return;
     }
 
-    if (!gingerEmail || !gingerUsername || !gingerPassword) {
-      setError("Ginger credentials are required to link your account.");
+    if (!gingerEmail || !gingerUsername || !softwarePassword) {
+      setError("Bitmappro email, sitename, and software password are required to link your account.");
       setIsLoading(false); return;
     }
 
@@ -158,7 +158,7 @@ export default function CompleteProfilePage() {
         password,
         gingerEmail,
         gingerUsername,
-        gingerPassword
+        softwarePassword
       });
 
       if (res.success) {
@@ -331,14 +331,14 @@ export default function CompleteProfilePage() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="gingerPassword">Bitmappro Password <span className="text-red-500">*</span></label>
+                  <label className="block text-sm font-medium text-[#1B263B] dark:text-white/80" htmlFor="softwarePassword">Labeler Software Password <span className="text-red-500">*</span></label>
                   <div className="relative">
                     <input
                       className="w-full px-3 py-2.5 bg-white dark:bg-white/10 border border-black/15 dark:border-white/15 rounded-lg text-sm text-[#0D1B2A] dark:text-white caret-black dark:caret-white focus:outline-none focus:ring-2 focus:ring-[#1F7A1F]/30 dark:focus:ring-[#55f761]/40"
-                      type={showGingerPassword ? "text" : "password"} id="gingerPassword" name="gingerPassword" required disabled={isLoading} placeholder="••••••••"
+                      type={showSoftwarePassword ? "text" : "password"} id="softwarePassword" name="softwarePassword" required disabled={isLoading} placeholder="••••••••"
                     />
-                    <button type="button" onClick={() => setShowGingerPassword(!showGingerPassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60 hover:text-black dark:hover:text-white transition-colors" aria-label={showGingerPassword ? "Hide password" : "Show password"}>
-                      <EyeIcon show={showGingerPassword} />
+                    <button type="button" onClick={() => setShowSoftwarePassword(!showSoftwarePassword)} className="absolute inset-y-0 right-3 text-[#2F3E46] dark:text-white/60 hover:text-black dark:hover:text-white transition-colors" aria-label={showSoftwarePassword ? "Hide password" : "Show password"}>
+                      <EyeIcon show={showSoftwarePassword} />
                     </button>
                   </div>
                 </div>

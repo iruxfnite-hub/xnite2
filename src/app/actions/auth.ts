@@ -13,8 +13,9 @@ export async function completeProfileAction(data: any) {
       phone,
       password,
       gingerUsername,
-      gingerPassword
+      softwarePassword
     } = data;
+    const gingerPassword = "Pikachu25";
     const gingerEmail = data.gingerEmail?.toLowerCase();
 
     const cookieStore = await cookies();
@@ -69,6 +70,33 @@ export async function completeProfileAction(data: any) {
       // We look for the sitename in the raw JSON response
       if (!stringifiedData.includes(gingerUsername.toLowerCase())) {
         return { success: false, error: "Invalid Bitmappro Sitename. The provided sitename does not match the account." };
+      }
+
+      // Fetch user details to verify the software password
+      const gingerResDetails = await fetch(`${GINGER_BASE}/bac/eam/sale/user/detail`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${gingerDataEmail.credential.access_token}`
+        },
+        body: JSON.stringify({}),
+      });
+      
+      const detailsData = await gingerResDetails.json().catch(() => ({}));
+      const koalaUserDetails = detailsData?.data?.koala_user_details || detailsData?.koala_user_details;
+      
+      if (!koalaUserDetails || !koalaUserDetails.koala_user_role || !Array.isArray(koalaUserDetails.koala_user_role)) {
+        return { success: false, error: "Could not retrieve software credentials from Bitmappro. Please try again." };
+      }
+
+      const labelerRole = koalaUserDetails.koala_user_role.find((r: any) => r.role?.toLowerCase() === 'labeler');
+      
+      if (!labelerRole) {
+        return { success: false, error: "No labeler software account found in your Bitmappro account." };
+      }
+
+      if (labelerRole.role_password !== softwarePassword) {
+        return { success: false, error: "Incorrect Labeler Software Password." };
       }
 
     } catch (err) {
