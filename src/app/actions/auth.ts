@@ -49,7 +49,7 @@ export async function completeProfileAction(data: any) {
     // Verify Ginger credentials before creating the user
     try {
       const GINGER_BASE = process.env.NEXT_PUBLIC_GINGER_API_URL || "https://ginger.bitmappro.com";
-      
+
       // Verify Email + Password
       const gingerResEmail = await fetch(`${GINGER_BASE}/bac/login`, {
         method: "POST",
@@ -66,7 +66,7 @@ export async function completeProfileAction(data: any) {
       // Since we know the Ginger API returns the user details in the login response,
       // we strictly enforce that the sitename must be present in the payload.
       const stringifiedData = JSON.stringify(gingerDataEmail).toLowerCase();
-      
+
       // We look for the sitename in the raw JSON response
       if (!stringifiedData.includes(gingerUsername.toLowerCase())) {
         return { success: false, error: "Invalid Bitmappro Sitename. The provided sitename does not match the account." };
@@ -81,16 +81,16 @@ export async function completeProfileAction(data: any) {
         },
         body: JSON.stringify({}),
       });
-      
+
       const detailsData = await gingerResDetails.json().catch(() => ({}));
       const koalaUserDetails = detailsData?.data?.koala_user_details || detailsData?.koala_user_details;
-      
+
       if (!koalaUserDetails || !koalaUserDetails.koala_user_role || !Array.isArray(koalaUserDetails.koala_user_role)) {
         return { success: false, error: "Could not retrieve software credentials from Bitmappro. Please try again." };
       }
 
       const labelerRole = koalaUserDetails.koala_user_role.find((r: any) => r.role?.toLowerCase() === 'labeler');
-      
+
       if (!labelerRole) {
         return { success: false, error: "No labeler software account found in your Bitmappro account." };
       }

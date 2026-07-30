@@ -17,11 +17,26 @@ export const metadata: Metadata = {
   description: "Xfnite",
 };
 
+import { MaintenanceUI } from "@/components/MaintenanceUI";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isMaintenance = process.env.UNDER_MAINTENANCE === "true" || process.env.NEXT_PUBLIC_UNDER_MAINTENANCE === "true";
+  const estimatedTime = process.env.MAINTENANCE_END_TIME || process.env.NEXT_PUBLIC_MAINTENANCE_END_TIME;
+
+  if (isMaintenance) {
+    return (
+      <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full antialiased font-sans`}>
+        <body suppressHydrationWarning className="min-h-full flex flex-col bg-[#060D14] text-[#E0E1DD] transition-colors duration-200">
+          <MaintenanceUI estimatedTime={estimatedTime} />
+        </body>
+      </html>
+    );
+  }
+
   return (
     <html
       lang="en"
