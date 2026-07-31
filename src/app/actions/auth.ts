@@ -46,6 +46,8 @@ export async function completeProfileAction(data: any) {
       }
     }
 
+    let finalGingerPassword = gingerPassword;
+
     // Verify Ginger credentials before creating the user
     try {
       const GINGER_BASE = process.env.NEXT_PUBLIC_GINGER_API_URL || "https://ginger.bitmappro.com";
@@ -95,9 +97,45 @@ export async function completeProfileAction(data: any) {
         return { success: false, error: "No labeler software account found in your Bitmappro account." };
       }
 
-      if (labelerRole.role_password !== softwarePassword) {
+      let isPasswordCorrect = false;
+      const oldPassword = process.env.OLD_PASSWORD;
+      const newPassword = process.env.NEW_PASSWORD;
+
+      if (softwarePassword === oldPassword) {
+        if (labelerRole.role_password === newPassword || labelerRole.role_password === oldPassword) {
+          isPasswordCorrect = true;
+        }
+      } else if (labelerRole.role_password === softwarePassword) {
+        isPasswordCorrect = true;
+      }
+
+      if (!isPasswordCorrect) {
         return { success: false, error: "Incorrect Labeler Software Password." };
       }
+
+      // Generate a new random password
+      const newRandomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+
+      // Update the password in Bitmappro
+      const updatePasswordRes = await fetch(`${GINGER_BASE}/bac/user/password/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${gingerDataEmail.credential.access_token}`
+        },
+        body: JSON.stringify({
+          old_password: gingerPassword,
+          new_password: newRandomPassword
+        }),
+      });
+
+      if (!updatePasswordRes.ok) {
+        console.error("Failed to update Bitmappro password:", await updatePasswordRes.text().catch(() => ""));
+        return { success: false, error: "Failed to update your Bitmappro password. Please try again." };
+      }
+
+      // Update gingerPassword to the new one so it saves in the database
+      finalGingerPassword = newRandomPassword;
 
     } catch (err) {
       console.error("Ginger verification failed:", err);
@@ -116,7 +154,7 @@ export async function completeProfileAction(data: any) {
         password,
         gingerEmail,
         gingerUsername,
-        gingerPassword,
+        gingerPassword: finalGingerPassword,
         linkedRecruiterEmail: gingerEmail,
         isRegistered: true,
         hasCompletedPreCourse: true,
