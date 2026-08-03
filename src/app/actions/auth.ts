@@ -13,9 +13,11 @@ export async function completeProfileAction(data: any) {
       phone,
       password,
       gingerUsername,
+      gingerPassword,
       softwarePassword
     } = data;
-    let gingerPassword = "Pikachu25";
+    
+    let currentGingerPassword = gingerPassword;
     const gingerEmail = data.gingerEmail?.toLowerCase();
 
     const cookieStore = await cookies();
@@ -52,27 +54,39 @@ export async function completeProfileAction(data: any) {
     try {
       const GINGER_BASE = process.env.NEXT_PUBLIC_GINGER_API_URL || "https://ginger.bitmappro.com";
 
-      // Verify Email + Password
+      let attemptPassword = currentGingerPassword;
+      if (currentGingerPassword === "123Qwe") {
+        attemptPassword = "Pikachu25";
+      }
+
       let gingerResEmail = await fetch(`${GINGER_BASE}/bac/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: gingerEmail, password: gingerPassword }),
+        body: JSON.stringify({ email: gingerEmail, password: attemptPassword }),
       });
       let gingerDataEmail = await gingerResEmail.json().catch(() => ({}));
 
       if (!gingerResEmail.ok || !gingerDataEmail?.credential?.access_token) {
-        gingerPassword = "123Qwe";
-        gingerResEmail = await fetch(`${GINGER_BASE}/bac/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: gingerEmail, password: gingerPassword }),
-        });
-        gingerDataEmail = await gingerResEmail.json().catch(() => ({}));
-
-        if (!gingerResEmail.ok || !gingerDataEmail?.credential?.access_token) {
+        if (currentGingerPassword === "123Qwe") {
+          // If Pikachu25 failed, try the actual 123Qwe password
+          attemptPassword = "123Qwe";
+          gingerResEmail = await fetch(`${GINGER_BASE}/bac/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: gingerEmail, password: attemptPassword }),
+          });
+          gingerDataEmail = await gingerResEmail.json().catch(() => ({}));
+          
+          if (!gingerResEmail.ok || !gingerDataEmail?.credential?.access_token) {
+            return { success: false, error: "Invalid Bitmappro Email or Password. Please check your credentials." };
+          }
+        } else {
           return { success: false, error: "Invalid Bitmappro Email or Password. Please check your credentials." };
         }
       }
+      
+      // Ensure we use the successful password for the update request later
+      currentGingerPassword = attemptPassword;
 
       // Check if the provided username exists somewhere in the response data.
       // Since we know the Ginger API returns the user details in the login response,
@@ -84,7 +98,7 @@ export async function completeProfileAction(data: any) {
         return { success: false, error: "Invalid Bitmappro Sitename. The provided sitename does not match the account." };
       }
 
-      // Fetch user details to verify the software password
+      // Fetch user details to verify the labeler role
       const gingerResDetails = await fetch(`${GINGER_BASE}/bac/eam/sale/user/detail`, {
         method: "POST",
         headers: {
@@ -134,7 +148,7 @@ export async function completeProfileAction(data: any) {
           "Authorization": `Bearer ${gingerDataEmail.credential.access_token}`
         },
         body: JSON.stringify({
-          old_password: gingerPassword,
+          old_password: currentGingerPassword,
           new_password: newRandomPassword
         }),
       });
